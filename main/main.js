@@ -1,66 +1,229 @@
-alert("Bienvenido a SCPuntofittnes");
+//PRODUCTOS
+const productos = [
+    //remeras
+    {
+    id: "remera01",
+    titulo: "Remera 01",
+    imagen: "../img/remeras/remera01.webp",
+    categoria: {
+        nombre: "Remeras",
+        id: "remeras"
+    },
+    precio: 2500, 
+
+    },
+    {
+        id: "remera02",
+        titulo: "Remera 02",
+        imagen: "../img/remeras/remera02.webp",
+        categoria: {
+            nombre: "Remeras",
+            id: "remeras"
+        },
+        precio: 2500, 
+    
+    },
+    {
+        id: "remera03",
+        titulo: "Remera 03",
+        imagen: "../img/remeras/remera03.webp",
+        categoria: {
+            nombre: "Remeras",
+            id: "remeras"
+        },
+        precio: 2500, 
+    
+    },
+    {
+        id: "remera04",
+        titulo: "Remera 04",
+        imagen: "../img/remeras/remera04.webp",
+        categoria: {
+            nombre: "Remeras",
+            id: "remeras"
+        },
+        precio: 2500, 
+    
+    },
+    {
+        id: "remera05",
+        titulo: "Remera 05",
+        imagen: "../img/remeras/remera05.webp",
+        categoria: {
+            nombre: "Remeras",
+            id: "remeras"
+        },
+        precio: 2500, 
+    
+        },
+    
+    //shorts
+
+    {
+        id: "short01",
+        titulo: "Short 01",
+        imagen: "../img/shorts/short01.webp",
+        categoria: {
+            nombre: "Shorts",
+            id: "shorts"
+
+        },
+        precio: 2000
+    },
+    {
+        id: "short02",
+        titulo: "Short 02",
+        imagen: "../img/shorts/short02.webp",
+        categoria: {
+            nombre: "Shorts",
+            id: "shorts"
+
+        },
+        precio: 2000
+    },
+    {
+        id: "short03",
+        titulo: "Short 03",
+        imagen: "../img/shorts/short03.webp",
+        categoria: {
+            nombre: "Shorts",
+            id: "shorts"
+
+        },
+        precio: 2000
+    },
+    
+    
+    {
+        id: "short04",
+        titulo: "Short 04",
+        imagen: "../img/shorts/short04.webp",
+        categoria: {
+            nombre: "Shorts",
+            id: "shorts"
+
+        },
+        precio: 2000
+    },
+    
+    
+    {
+        id: "short05",
+        titulo: "Short 05",
+        imagen: "../img/shorts/short05.webp",
+        categoria: {
+            nombre: "Shorts",
+            id: "shorts"
+
+        },
+        precio: 2000
+    }
+
+]; 
 
 
-let nombreApellido = prompt("Ingrese su Nombre y Apellido");
 
 
-let edad = Number(prompt("¿Que edad tenes?"));
 
-function activity(ejercicio, precio) {
-    this.ejercicio = ejercicio;
-    this.precio = precio; 
+const contenedorProductos = document.querySelector("#contenedorProductos");
+const botonesCategoria = document.querySelectorAll(".botonCategoria");
+const tituloPrincipal = document.querySelector("#tituloPrincipal");
+let botonesAgregar = document.querySelectorAll(".productoAgregar");
+const numerito = document.querySelector("#numerito");
+
+
+
+
+
+
+function cargarProductos(productosElegidos) {
+   
+   contenedorProductos.innerHTML = "";
+    productosElegidos.forEach(producto => {
+        const div = document.createElement("div");
+        div.classList.add("producto");
+        div.innerHTML = `
+            <img src="${producto.imagen}" alt="${producto.titulo}" class="productoImagen">
+            <div class="productoCaracteristicas">
+                <h3 class="productoTitulo">${producto.titulo}</h3>
+                <p class="productoPrecio">$${producto.precio}</p>
+                <button class="productoAgregar" id="${producto.id}">Agregar</button>
+            </div>
+        `;
+        contenedorProductos.append(div);
+    });
+    actualizarBotonesAgregar()
 }
-        const activity1 = new activity ("Aerobico", 100)
-        const activity2 = new activity ("Musculacion", 200)
-        const activity3 = new activity ("Crossfit", 150)
-        const activity4 = new activity ("Zumba", 125)
+cargarProductos(productos);
 
-let instruccion = [activity1, activity2, activity3, activity4];
+botonesCategoria.forEach(boton =>{
+        boton.addEventListener("click", (e) => {
 
-saludar()
-function saludar () {
+            botonesCategoria.forEach(boton => boton.classList.remove("active"));
+            e.currentTarget.classList.add("active");
 
-    alert("Hola" + " " + nombreApellido + "." + " " + "Contanos un poco de vos.")
-    console.log("Hola" + " " + nombreApellido + "." + " " + "Contanos un poco de vos.")
-    obtenerDatos () 
-}
+            if (e.currentTarget.id != "todos") {
+                const productoCategoria = productos.find(producto => producto.categoria.id === e.currentTarget.id)
+                tituloPrincipal.innerText = productoCategoria.categoria.nombre;
 
-function obtenerDatos () {
-  
-let mensaje = "Por favor, elige una actividad:\n";
-instruccion.forEach((act, index) => {
-  mensaje += `${index + 1}. ${act.ejercicio} ($${act.precio} por día)\n`;
+                const productosBoton = productos.filter(producto => producto.categoria.id === e.currentTarget.id)
+                cargarProductos(productosBoton);
+            } else {
+                tituloPrincipal.innerText = "Todos los productos";
+                cargarProductos(productos)    ;
+            }
+            
+
+
+            
+        })
+
+
 });
 
+function actualizarBotonesAgregar() {
+    botonesAgregar = document.querySelectorAll(".productoAgregar")
 
-let eleccion = prompt(mensaje);
+    botonesAgregar.forEach(boton => {
+        boton.addEventListener("click", agregarAlCarrito)
+    })
+}
 
 
-if (isNaN(eleccion) || eleccion === null || eleccion.trim() === "") {
-  alert("Por favor, ingresa un número válido.");
+let productosEnCarrito;
+
+let productosEnCarritoLS = localStorage.getItem("productos-en-carrito");
+
+
+
+if(productosEnCarritoLS) {
+     productosEnCarrito = JSON.parse(productosEnCarritoLS);
+     actualizarNumerito(); 
 } else {
-  eleccion = Number(eleccion);
+    productosEnCarrito = [];
+}
 
-  if (eleccion >= 1 && eleccion <= instruccion.length) {
-    let actividadElegida = instruccion[eleccion - 1];
 
-    
-    let cantidadDias = prompt("Ingresa la cantidad de días por semana que deseas asistir (1-7):");
 
-    
-    if (isNaN(cantidadDias) || cantidadDias === null || cantidadDias.trim() === "") {
-      alert("Por favor, ingresa un número válido para la cantidad de días por semana.");
+function agregarAlCarrito (e) {
+
+    const idBoton = e.currentTarget.id;
+    const productoAgregado = productos.find(producto => producto.id === idBoton);
+
+    if (productosEnCarrito.some(producto => producto.id === idBoton)) {
+        const index = productosEnCarrito.findIndex(producto => producto.id === idBoton);
+        productosEnCarrito[index].cantidad++;
     } else {
-      cantidadDias = Number(cantidadDias);
-
-      if (cantidadDias >= 1 && cantidadDias <= 7) {
-        let costoMensual = actividadElegida.precio * cantidadDias * 4;
-        alert(`¡Gracias por unirte a nuestros servicios!\nCosto mensual: $${costoMensual}`);
-      } else {
-        alert("La cantidad de días por semana debe estar entre 1 y 7.");
-      }
+       productoAgregado.cantidad = 1;
+        productosEnCarrito.push(productoAgregado);
     }
-  } else {
-    alert("Opción inválida. Por favor, elige una opción válida.");
-  }
-} }
+    actualizarNumerito()
+
+    localStorage.setItem("productos-en-carrito", JSON.stringify(productosEnCarrito))
+    
+}
+
+function actualizarNumerito() {
+    let nuevoNumerito = productosEnCarrito.reduce((acc, producto) => acc + producto.cantidad, 0);
+    numerito.innerText = nuevoNumerito;
+}
